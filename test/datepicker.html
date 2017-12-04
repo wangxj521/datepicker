@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        ul{
+            padding:0;
+            margin:0;
+        }
+        li{
+            list-style: none;
+        }
+        .date-pick-box {
+            width:209px;
+        }
+        .date-pick-head {
+            width:209px;
+            height:20px;
+            font-size:14px;
+            line-height:20px;
+            border:1px solid #ccc;;
+        }
+        .date-pick-head li {
+            float: left;
+            width:69px;
+            border-right:1px solid #ccc;
+            text-align: center;
+        }
+        .date-pick-head li:last-child{
+            border-right:none;
+        }
+        .date-pick-days{
+            width:210px;
+            font-size:0;
+            border-left:1px solid #ccc;
+            border-top:none;
+        }
+        .date-pick-days span{
+            font-size:12px;
+            display:inline-block;
+            width:29px;
+            height:20px;
+            line-height: 20px;
+            border:1px solid #ccc;
+            margin-top:-1px;
+            margin-left:-1px;
+            text-align: center;
+        }
+        .date-pick-dates span.prev,
+        .date-pick-dates span.next{
+            background-color: #eee;
+        }
+        .date-pick-dates span.active{
+            background-color: green;
+            color: #fff;
+        }
+        .date-pick-dates span{
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="date-pick-box">
+    <ul class="date-pick-head">
+        <li><span id="year">1978</span>年</li>
+        <li><span id="month">2</span>月<button id="nextMonth">></button></li>
+        <li><span id="days">4</span>日</li>
+    </ul>
+    <div class="date-pick-days">
+        <span>日</span>
+        <span>一</span>
+        <span>二</span>
+        <span>三</span>
+        <span>四</span>
+        <span>五</span>
+        <span>六</span>
+        <div id="dates" class="date-pick-dates">
+
+        </div>
+    </div>
+</div>
+<script>
+    var num = 0;
+
+
+    function initdate() {
+        var nowDate = new Date();
+        var nowYear = nowDate.getFullYear();
+        var nowMonth = nowDate.getMonth();
+
+        var currentDate = new Date();
+            currentDate.setMonth(nowMonth + num);
+        var nowday = currentDate.getDate();
+            currentDate.setDate(1);
+        var currentYear = currentDate.getFullYear();
+        var currentMonth = currentDate.getMonth();
+        var currentDay = currentDate.getDay();
+            currentDate.setDate(0);
+        var prevDates = currentDate.getDate();
+            currentDate.setMonth(currentMonth + 1);
+            currentDate.setDate(1);
+        var nextYear = currentDate.getFullYear();
+        var nextMonth = currentDate.getMonth();
+            currentDate.setDate(0);
+        var currentDates = currentDate.getDate();
+            currentDate.setMonth(currentMonth -1);
+            currentDate.setDate(1);
+        var prevYear = currentDate.getFullYear();
+        var prevMonth = currentDate.getMonth();
+
+
+        var odates = document.getElementById('dates');
+        var oyear = document.getElementById('year');
+        var omonth = document.getElementById('month');
+        var odays = document.getElementById('days');
+        oyear.innerText = currentYear;
+        omonth.innerText = currentMonth + 1;
+        odays.innerText = nowday;
+        odates.innerHTML= '';
+        for(var i = prevDates - currentDay; i < prevDates; i++){
+            (function (i) {
+                var ospan = document.createElement('span');
+                ospan.data = {
+                    year: prevYear,
+                    month: prevMonth + 1,
+                    date: i + 1
+                };
+                ospan.onclick = function () {
+                    oyear.innerText = this.data.year;
+                    omonth.innerText = this.data.month;
+                    odays.innerText = this.data.date;
+                };
+                ospan.innerText = i + 1;
+                ospan.className = 'prev';
+                odates.appendChild(ospan);
+
+            })(i);
+
+        }
+        for(var j = 0; j < currentDates; j++){
+            (function (j) {
+                var ospan = document.createElement('span');
+                ospan.data = {
+                    year: currentYear,
+                    month: currentMonth + 1,
+                    date: j + 1
+                };
+                ospan.onclick = function () {
+                    oyear.innerText = this.data.year;
+                    omonth.innerText = this.data.month;
+                    odays.innerText = this.data.date;
+                };
+                ospan.innerText = j + 1;
+
+                odates.appendChild(ospan);
+
+            })(j);
+
+        }
+        for( var k = 0; k < 42 - currentDates - currentDay ; k++){
+            (function (k) {
+                var ospan = document.createElement('span');
+                ospan.data = {
+                    year: nextYear,
+                    month: nextMonth + 1,
+                    date: k + 1
+                };
+                ospan.onclick = function () {
+                    oyear.innerText = this.data.year;
+                    omonth.innerText = this.data.month;
+                    odays.innerText = this.data.date;
+                };
+                ospan.innerText = k + 1;
+                ospan.className = 'next';
+
+                odates.appendChild(ospan);
+
+            })(k);
+
+        }
+        var spans = odates.getElementsByTagName('span');
+        var arr = [];
+        for(var m =0 ; m < spans.length; m++){
+            arr.push(spans[m].className);
+            if(spans[m].data.date == nowday && spans[m].data.month == currentMonth + 1 && spans[m].data.year == currentYear){
+                spans[m].className = 'active';
+            }
+            spans[m].onclick =function () {
+                for(var n = 0; n < spans.length; n++){
+                    spans[n].className =arr[n];
+                }
+                oyear.innerText = this.data.year;
+                omonth.innerText = this.data.month;
+                odays.innerText = this.data.date;
+                this.className = 'active';
+            }
+        }
+    }
+
+    initdate();
+    var obtn = document.getElementById('nextMonth');
+    obtn.onclick = function () {
+        num ++;
+        initdate();
+    }
+</script>
+</body>
+</html>
